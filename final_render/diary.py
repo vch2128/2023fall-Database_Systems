@@ -201,7 +201,7 @@ def check_signup(event):
         uid=event.source.user_id
         profile=line_bot_api.get_profile(uid)
         user_id=profile.user_id
-        cur.execute(SQL_SIGNUP,user_id)
+        cur.execute(SQL_SIGNUP,(user_id))
         signup_rec=cur.fetchall()
         print(signup_rec)
         return signup_rec is None
