@@ -124,6 +124,43 @@ def feedback(event ,emotiontype):
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='feedback失敗'))
         
 
+def check_signup(user_id):
+    try:
+        cur.execute(SQL_SIGNUP,(user_id,))
+        user_info_rec = cur.fetchone()
+        if user_info_rec is not None:
+            print("User already registered")
+            return False  # User is already registered
+        else:
+            return True  # User is not registered
+    except psycopg2.Error as e:
+        print(f"Error in check_signup: {e}")
+        conn.rollback()
+        return False
+
+
+def insert_emotion_record(user_id, date, emotion_value):
+    try:
+        sql="INSERT INTO emotion_records (user_id,record_time,emotion) VALUES (%s, %s,%s);"
+        cur.execute(sql, (user_id, str(date),emotion_value,))
+        conn.commit()
+        print("insert")
+    except psycopg2.Error as e:
+         print(f"Error in insert emotions: {e}")   
+         conn.rollback()
+
+def check_duplicate_record(user_id, date):
+    try:
+        sql = "SELECT * FROM emotion_records WHERE user_id = %s AND record_time = %s;"
+        cur.execute(sql, (user_id, str(date),))
+        existing_record = cur.fetchone()
+        return existing_record is not None
+    except psycopg2.Error as e:
+        print(f"Error in checking duplicate record: {e}")
+        conn.rollback()
+        return False
+
+
 #目前emotiontype是數字
 def store_record(event,date,emotiontype):
      try:
@@ -133,7 +170,7 @@ def store_record(event,date,emotiontype):
         user_id=profile.user_id
         #current_time = datetime.now()
         emotion_value = emotiontype
-        if check_signup(user_id):
+        if not check_signup(user_id):
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
         elif not check_duplicate_record(user_id, date):
             insert_emotion_record(user_id, date, emotion_value)
@@ -171,38 +208,4 @@ def update_emotion_record(event, date, emotion_value):
         feedback(event ,emotion_value)
 
     except psycopg2.Error as e:
-        print(f"Error in updating emotion record: {e}")
-
-
-def check_duplicate_record(user_id, date):
-    try:
-        sql = "SELECT * FROM emotion_records WHERE user_id = %s AND record_time = %s;"
-        cur.execute(sql, (user_id, str(date),))
-        existing_record = cur.fetchone()
-        return existing_record is not None
-    except psycopg2.Error as e:
-        print(f"Error in checking duplicate record: {e}")
-        conn.rollback()
-        return False
-     
-
-def insert_emotion_record(user_id, date, emotion_value):
-    try:
-        sql="INSERT INTO emotion_records (user_id,record_time,emotion) VALUES (%s, %s,%s);"
-        cur.execute(sql, (user_id, str(date),emotion_value,))
-        conn.commit()
-        print("insert")
-    except psycopg2.Error as e:
-         print(f"Error in insert emotions: {e}")   
-         conn.rollback()
-
-def check_signup(user_id):
-    try:
-        cur.execute(SQL_SIGNUP,(user_id,))
-        signup_rec=cur.fetchall()
-        print(signup_rec)
-        return signup_rec is None
-    except psycopg2.Error as e:
-         print(f"Error in check_signup: {e}")   
-         conn.rollback()
-         
+        print(f"Error in updating emotion record: {e}")   
