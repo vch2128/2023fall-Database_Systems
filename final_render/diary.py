@@ -20,21 +20,27 @@ cur=conn.cursor()
 
 def showtime(event):
     try:
-        t=TextSendMessage(
-            text='請選擇日期：',
-            quick_reply=QuickReply(
-                items=[
-                    QuickReplyButton(
-                        action=DatetimePickerAction(
-                            label='選日期',
-                            mode="date",
-                            data='action=date'
+        uid=event.source.user_id
+        profile=line_bot_api.get_profile(uid)
+        user_id=profile.user_id
+        if not check_signup(user_id):
+            line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
+        else:
+            t=TextSendMessage(
+                text='請選擇日期：',
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyButton(
+                            action=DatetimePickerAction(
+                                label='選日期',
+                                mode="date",
+                                data='action=date'
+                            )
                         )
-                    )
-                ]
+                    ]
+                )
             )
-        )
-        line_bot_api.reply_message(event.reply_token,t)
+            line_bot_api.reply_message(event.reply_token,t)
     except:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='失敗'))
 
@@ -149,6 +155,7 @@ def insert_emotion_record(user_id, date, emotion_value):
          print(f"Error in insert emotions: {e}")   
          conn.rollback()
 
+
 def check_duplicate_record(user_id, date):
     try:
         sql = "SELECT * FROM emotion_records WHERE user_id = %s AND record_time = %s;"
@@ -170,9 +177,8 @@ def store_record(event,date,emotiontype):
         user_id=profile.user_id
         #current_time = datetime.now()
         emotion_value = emotiontype
-        if not check_signup(user_id):
-            line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
-        elif not check_duplicate_record(user_id, date):
+
+        if not check_duplicate_record(user_id, date):
             insert_emotion_record(user_id, date, emotion_value)
             feedback(event, emotiontype)
         else:
