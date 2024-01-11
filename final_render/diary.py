@@ -133,7 +133,7 @@ def store_record(event,date,emotiontype):
         user_id=profile.user_id
         #current_time = datetime.now()
         emotion_value = emotiontype
-        if check_signup:
+        if check_signup(event):
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
         elif not check_duplicate_record(user_id, date):
             insert_emotion_record(user_id, date, emotion_value)
