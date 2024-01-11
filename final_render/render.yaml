@@ -2,9 +2,9 @@ services:
 - type: web
   name: db-final-linebot
   env: python
-  repo: https://github.com/vch2128/db_finalproject.git
-  buildCommand: pip install gunicorn -r requirements.txt
-  startCommand: gunicorn test:app
+  repo: https://github.com/vch2128/2023fall-Database_Systems.git
+  buildCommand: cd final_render;pip install gunicorn -r requirements.txt
+  startCommand: cd final_render;gunicorn app:app
   plan: free
   autoDeploy: false
   envVars:

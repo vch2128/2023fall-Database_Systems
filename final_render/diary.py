@@ -7,23 +7,15 @@ import json
 import os
 from datetime import datetime
 
-line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
-parser = WebhookParser(LINE_CHANNEL_SECRET)
+line_bot_api = LineBotApi(channel_access_token)
+parser = WebhookParser(channel_secret)
 
-try:
-    conn=psycopg2.connect(host=HOST_NAME, 
-                        user=USER_NAME, 
-                        password=PASSWORD, 
-                        dbname=DB_NAME, 
-                        port=PORT_NUM)
-    cur=conn.cursor()
-
-    #conn.commit()  
-
-    print ("success")
-
-except (Exception, psycopg2.Error) as error:
-    print("Error while connecting to PostgreSQL:", error)
+conn=psycopg2.connect(host=host_name, 
+                        user=user_name, 
+                        password=password, 
+                        dbname=db_name, 
+                        port=port_num)
+cur=conn.cursor()
 
 
 def showtime(event):

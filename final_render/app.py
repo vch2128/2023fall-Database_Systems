@@ -17,21 +17,20 @@ app = Flask(__name__)
 
 # LINE BOT info
 try: 
-    line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
-    parser = WebhookParser(LINE_CHANNEL_SECRET)
-    handler = WebhookHandler(LINE_CHANNEL_SECRET)
+    line_bot_api = LineBotApi(channel_access_token)
+    parser = WebhookParser(channel_secret)
+    handler = WebhookHandler(channel_secret)
 except:
     print("Error while connecting to LineBot")
 
 
 try:
-    conn=psycopg2.connect(host=HOST_NAME, 
-                        user=USER_NAME, 
-                        password=PASSWORD, 
-                        dbname=DB_NAME, 
-                        port=PORT_NUM)
+    conn=psycopg2.connect(host=host_name, 
+                        user=user_name, 
+                        password=password, 
+                        dbname=db_name, 
+                        port=port_num)
     cur=conn.cursor()
-
     print ("success")
 
 except (Exception, psycopg2.Error) as error:
