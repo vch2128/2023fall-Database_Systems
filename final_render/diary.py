@@ -166,7 +166,7 @@ def update_emotion_record(event, date, emotion_value):
         profile=line_bot_api.get_profile(uid)
         user_id=profile.user_id
         sql = "UPDATE emotion_records SET emotion = %s WHERE user_id = %s AND record_time = %s;"
-        cur.execute(sql, (emotion_value, user_id, str(date)))
+        cur.execute(sql, (emotion_value, user_id, str(date),))
         conn.commit()
         feedback(event ,emotion_value)
 
@@ -177,7 +177,7 @@ def update_emotion_record(event, date, emotion_value):
 def check_duplicate_record(user_id, date):
     try:
         sql = "SELECT * FROM emotion_records WHERE user_id = %s AND record_time = %s;"
-        cur.execute(sql, (user_id, str(date)))
+        cur.execute(sql, (user_id, str(date),))
         existing_record = cur.fetchone()
         return existing_record is not None
     except psycopg2.Error as e:
@@ -189,7 +189,7 @@ def check_duplicate_record(user_id, date):
 def insert_emotion_record(user_id, date, emotion_value):
     try:
         sql="INSERT INTO emotion_records (user_id,record_time,emotion) VALUES (%s, %s,%s);"
-        cur.execute(sql, (user_id, str(date),emotion_value))
+        cur.execute(sql, (user_id, str(date),emotion_value,))
         conn.commit()
         print("insert")
     except psycopg2.Error as e:
@@ -201,7 +201,7 @@ def check_signup(event):
         uid=event.source.user_id
         profile=line_bot_api.get_profile(uid)
         user_id=profile.user_id
-        cur.execute(SQL_SIGNUP,(user_id))
+        cur.execute(SQL_SIGNUP,(user_id,))
         signup_rec=cur.fetchall()
         print(signup_rec)
         return signup_rec is None
