@@ -18,6 +18,22 @@ conn=psycopg2.connect(host=host_name,
 cur=conn.cursor()
 
 
+def check_signup(user_id):
+    try:
+        cur.execute(SQL_SIGNUP,(user_id,))
+        user_info_rec = cur.fetchone()
+        print("aa")
+        print(user_info_rec)
+        if user_info_rec is not None:
+            print("User already registered")
+            return False  # User is already registered
+        else:
+            return True  # User is not registered
+    except psycopg2.Error as e:
+        print(f"Error in check_signup: {e}")
+        conn.rollback()
+        return False
+
 def showtime(event):
     try:
         uid=event.source.user_id
@@ -129,20 +145,6 @@ def feedback(event ,emotiontype):
     except:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='feedback失敗'))
         
-
-def check_signup(user_id):
-    try:
-        cur.execute(SQL_SIGNUP,(user_id,))
-        user_info_rec = cur.fetchone()
-        if user_info_rec is not None:
-            print("User already registered")
-            return False  # User is already registered
-        else:
-            return True  # User is not registered
-    except psycopg2.Error as e:
-        print(f"Error in check_signup: {e}")
-        conn.rollback()
-        return False
 
 
 def insert_emotion_record(user_id, date, emotion_value):
