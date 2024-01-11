@@ -133,7 +133,7 @@ def store_record(event,date,emotiontype):
         user_id=profile.user_id
         #current_time = datetime.now()
         emotion_value = emotiontype
-        if check_signup(event):
+        if check_signup(user_id):
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
         elif not check_duplicate_record(user_id, date):
             insert_emotion_record(user_id, date, emotion_value)
@@ -196,11 +196,8 @@ def insert_emotion_record(user_id, date, emotion_value):
          print(f"Error in insert emotions: {e}")   
          conn.rollback()
 
-def check_signup(event):
+def check_signup(user_id):
     try:
-        uid=event.source.user_id
-        profile=line_bot_api.get_profile(uid)
-        user_id=profile.user_id
         cur.execute(SQL_SIGNUP,(user_id,))
         signup_rec=cur.fetchall()
         print(signup_rec)
