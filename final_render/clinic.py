@@ -27,6 +27,7 @@ def buttonregion(event):
             region_id,region_name = row
             values={"region_id":region_id,"region_name":region_name}
             alldata.append(values)
+            print(values)
        
         region = TemplateSendMessage(
             alt_text='Buttons template',
