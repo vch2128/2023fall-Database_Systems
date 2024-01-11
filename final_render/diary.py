@@ -126,36 +126,39 @@ def feedback(event ,emotiontype):
 
 #目前emotiontype是數字
 def store_record(event,date,emotiontype):
-     #拿取user id 
-     uid=event.source.user_id
-     profile=line_bot_api.get_profile(uid)
-     user_id=profile.user_id
-     #current_time = datetime.now()
-     emotion_value = emotiontype
-     if check_signup:
-         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
-     elif not check_duplicate_record(user_id, date):
-        insert_emotion_record(user_id, date, emotion_value)
-        feedback(event, emotiontype)
-     else:
-        # 提供提示
-        t = TextSendMessage(
-            text='你已經存過當日心情啦！要覆寫紀錄嗎？',
-            quick_reply=QuickReply(
-                items=[
-                    QuickReplyButton(
-                        action=PostbackAction(label='是', 
-                                              text='是', 
-                                              data='action=overwrite_%s_%s'%(emotion_value,str(date))
-                                              ),
-                    ),
-                    QuickReplyButton(
-                        action=MessageAction(label='否', text='否'),
-                    ),
-                ]
+     try:
+        #拿取user id 
+        uid=event.source.user_id
+        profile=line_bot_api.get_profile(uid)
+        user_id=profile.user_id
+        #current_time = datetime.now()
+        emotion_value = emotiontype
+        if check_signup:
+            line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
+        elif not check_duplicate_record(user_id, date):
+            insert_emotion_record(user_id, date, emotion_value)
+            feedback(event, emotiontype)
+        else:
+            # 提供提示
+            t = TextSendMessage(
+                text='你已經存過當日心情啦！要覆寫紀錄嗎？',
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyButton(
+                            action=PostbackAction(label='是', 
+                                                text='是', 
+                                                data='action=overwrite_%s_%s'%(emotion_value,str(date))
+                                                ),
+                        ),
+                        QuickReplyButton(
+                            action=MessageAction(label='否', text='否'),
+                        ),
+                    ]
+                )
             )
-        )
-        line_bot_api.reply_message(event.reply_token, t)
+            line_bot_api.reply_message(event.reply_token, t)
+     except Exception as e:
+         print(f"Error in store record: {e}")
 
 def update_emotion_record(event, date, emotion_value):
     try:
@@ -200,6 +203,7 @@ def check_signup(event):
         user_id=profile.user_id
         cur.execute(SQL_SIGNUP,user_id)
         signup_rec=cur.fetchall()
+        print(signup_rec)
         return signup_rec is None
     except psycopg2.Error as e:
          print(f"Error in check_signup: {e}")   
