@@ -156,13 +156,6 @@ def callback():
 
 
 
-if conn:
-    cur.close()
-    conn.close()
-    print("PostgreSQL connection is closed.")
-
-
-
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 80))
