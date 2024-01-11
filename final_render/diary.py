@@ -39,7 +39,7 @@ def showtime(event):
         uid=event.source.user_id
         profile=line_bot_api.get_profile(uid)
         user_id=profile.user_id
-        if not check_signup(user_id):
+        if check_signup(user_id):
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text='請先註冊！'))
         else:
             t=TextSendMessage(
