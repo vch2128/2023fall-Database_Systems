@@ -133,7 +133,7 @@ def callback():
                 emotiontype = backdata['action'].split('_')[1]
                 date = backdata['action'].split('_')[2]
                 update_emotion_record(event, date, emotiontype)
-                
+            
 
             #@STAT
             elif backdata.get('action') and backdata['action'].startswith('selectdate'): 

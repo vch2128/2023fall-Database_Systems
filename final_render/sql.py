@@ -76,3 +76,8 @@ select emotion_name,cnt
 from cnt
 join emotion_names on emotion_id=emo_id
 """ 
+
+SQL_SIGNUP = """
+select * from user_info
+where user_id = %s
+"""

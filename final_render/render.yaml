@@ -1,6 +1,6 @@
 services:
 - type: web
-  name: db-final-linebot
+  name: db_linebot
   env: python
   repo: https://github.com/vch2128/2023fall-Database_Systems.git
   buildCommand: cd final_render;pip install gunicorn -r requirements.txt
